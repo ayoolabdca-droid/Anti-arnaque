@@ -1,0 +1,1156 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Anti-arnaque téléphone (TEST)</title>
+
+  <style>
+    :root{
+      --bg0:#060913;
+      --bg1:#0b1220;
+      --glass: rgba(255,255,255,.07);
+      --glass2: rgba(255,255,255,.10);
+      --border: rgba(255,255,255,.12);
+
+      --text:#e9eefc;
+      --muted: rgba(233,238,252,.72);
+
+      --primary:#ff4d6d;
+      --primary2:#ff2e55;
+      --accent:#ffb703;
+
+      --good:#22c55e;
+      --mid:#f59e0b;
+      --bad:#ef4444;
+
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --shadowSoft: 0 12px 30px rgba(0,0,0,.22);
+
+      --r16:16px;
+      --r18:18px;
+      --r22:22px;
+
+      --max: 1020px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1100px 600px at 14% 0%, rgba(255,77,109,.25), transparent 60%),
+        radial-gradient(900px 600px at 100% 35%, rgba(255,183,3,.18), transparent 55%),
+        radial-gradient(800px 500px at 30% 100%, rgba(34,197,94,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    .wrap{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 18px 14px 70px;
+    }
+
+    a{color:inherit}
+
+    .muted{color:var(--muted); line-height:1.45}
+    .tiny{font-size:12px;color:rgba(233,238,252,.62);line-height:1.45}
+
+    /* Top Nav */
+    .nav{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, rgba(6,9,19,.78), rgba(6,9,19,.42));
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .navInner{
+      max-width: var(--max);
+      margin:0 auto;
+      padding: 10px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      min-width: 240px;
+    }
+    .brand img{
+      width:72px;
+      height:72px;
+   }
+
+  @media (max-width: 720px){
+   .brand img{
+     width:52px;
+     height:52px;
+   }
+}
+
+    .brandTitle{
+      font-weight: 950;
+      letter-spacing: .2px;
+      line-height: 1.1;
+    }
+    .brandSub{
+      font-size:12px;
+      color: rgba(233,238,252,.70);
+      margin-top:2px;
+    }
+    .navRight{
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;
+    }
+
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,183,3,.16);
+      border: 1px solid rgba(255,183,3,.30);
+      color: #ffd166;
+      font-weight: 900;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      font-size: 12px;
+      user-select:none;
+    }
+
+    /* Cards */
+    .box{
+      border: 1px solid var(--border);
+      border-radius: var(--r22);
+      padding: 16px;
+      margin: 14px 0;
+      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow:hidden;
+    }
+    .box::before{
+      content:"";
+      position:absolute; inset:-1px;
+      background:
+        radial-gradient(600px 240px at 10% 0%, rgba(255,77,109,.10), transparent 55%),
+        radial-gradient(700px 250px at 100% 10%, rgba(255,183,3,.08), transparent 55%);
+      pointer-events:none;
+    }
+    .box > *{position:relative}
+
+    .boxTitleRow{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; margin-bottom: 10px;
+    }
+    h2,h3{margin:0}
+    h3{font-size: 16px}
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.07);
+      font-weight: 850;
+      font-size: 12px;
+      user-select:none;
+    }
+
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+
+    /* Inputs */
+    label{display:block; margin-bottom:6px}
+    select,textarea,input{
+      width:100%;
+      padding:12px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      outline:none;
+    }
+    textarea{min-height:150px; resize: vertical}
+    select:focus,textarea:focus,input:focus{
+      border-color: rgba(255,77,109,.55);
+      box-shadow: 0 0 0 4px rgba(255,77,109,.12);
+    }
+
+    /* Buttons */
+    .btnRow{display:flex; gap:10px; margin-top:10px; flex-wrap:wrap}
+    button{
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      cursor:pointer;
+      background: linear-gradient(135deg, var(--primary), var(--primary2));
+      color:white;
+      font-weight: 950;
+      letter-spacing:.2px;
+      transition: transform .08s ease, opacity .15s ease, box-shadow .2s ease, filter .2s ease;
+      box-shadow: 0 12px 26px rgba(255,46,85,.16);
+    }
+    button:hover{opacity:.97; filter: saturate(1.05)}
+    button:active{transform: scale(.98)}
+    button[disabled]{opacity:.45; cursor:not-allowed; box-shadow:none}
+
+    .secondaryBtn{
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow:none;
+      color: rgba(233,238,252,.92);
+    }
+
+    /* Tags */
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius:999px;
+      padding:6px 10px;
+      margin:4px 6px 0 0;
+      font-size: 13px;
+    }
+    .tag::before{
+      content:"•";
+      color: rgba(255,183,3,.9);
+      font-weight: 900;
+    }
+
+    /* Risk */
+    .riskRow{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px}
+    .riskBadge{
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-weight: 950;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+      display:inline-flex; align-items:center; gap:8px;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:99px;background:rgba(255,255,255,.3);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.06);
+    }
+
+    .bar{
+      width:100%;
+      height: 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.08);
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .bar > div{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background: linear-gradient(90deg, var(--good), var(--mid), var(--bad));
+      transition: width .35s ease;
+    }
+
+    /* Panels */
+    .panel{
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    .panel h4{
+      margin: 0 0 8px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      color: rgba(233,238,252,.82);
+    }
+    .list{margin:0; padding-left: 18px}
+    .list li{margin: 7px 0; color: rgba(233,238,252,.94)}
+    .mono{
+      white-space:pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13px;
+      line-height:1.5;
+    }
+
+    /* Email row */
+    .emailRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .emailRow input{flex:1; min-width:220px}
+
+    /* Pricing (kept but no prices) */
+    .plan{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: var(--shadowSoft);
+      position:relative;
+      overflow:hidden;
+      min-height: 180px;
+    }
+    .plan::before{
+      content:"";
+      position:absolute; inset:-1px;
+      background: radial-gradient(600px 240px at 20% 0%, rgba(255,77,109,.10), transparent 60%);
+      pointer-events:none;
+    }
+    .plan > *{position:relative}
+    .planTop{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      margin-bottom: 8px;
+    }
+    .planName{font-weight:950}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.07);
+      font-size: 12px;
+      font-weight: 850;
+      user-select:none;
+    }
+    .plan ul{margin:10px 0 0; padding-left:18px}
+    .plan li{margin:7px 0; color: rgba(233,238,252,.92)}
+    .planCTA{margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap}
+
+    .highlight{
+      border-color: rgba(255,183,3,.32);
+      background: rgba(255,183,3,.08);
+    }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(700px, calc(100% - 22px));
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 18px;
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      display:none;
+      z-index: 100;
+    }
+    .toastRow{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
+    .toastMsg{color: rgba(233,238,252,.95); line-height:1.4}
+    .toastClose{
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow:none;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-weight: 900;
+    }
+
+    footer{
+      margin-top: 18px;
+      text-align:center;
+      color: rgba(233,238,252,.62);
+      font-size: 12px;
+    }
+
+    @media (max-width: 860px){
+      .grid3{grid-template-columns:1fr}
+    }
+    @media (max-width: 720px){
+      .grid2{grid-template-columns:1fr}
+      .brand{min-width: unset}
+      .navRight{width:100%; justify-content:flex-start}
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Sticky Nav -->
+  <div class="nav">
+    <div class="navInner">
+      <div class="brand">
+        <img src="logo.png" alt="Logo" />
+        <div>
+          <div class="brandTitle">🔐 Anti-arnaque téléphonique</div>
+          <div class="brandSub">Teste un appel en 10 secondes — sans envoyer tes données.</div>
+        </div>
+      </div>
+
+      <div class="navRight">
+        <span class="badge">TEST</span>
+        <button class="secondaryBtn" id="demoQuickBtn" type="button">⚡ Exemple</button>
+        <!-- PRICING NAV REMOVED -->
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <div class="box">
+      <div class="boxTitleRow">
+        <h3>⚡ Comment ça marche</h3>
+        <span class="chip">Rapide & privé</span>
+      </div>
+      <p class="muted" style="margin:0">
+        ⚠️ Un site ne peut pas se brancher à l’audio “interne” d’un appel.
+        Pour tester : <b>colle le texte</b> (ou utilise le micro + appel en haut-parleur).
+      </p>
+      <p class="tiny" style="margin:10px 0 0">
+        Astuce : si quelqu’un demande un <b>code SMS</b>, ton <b>mot de passe</b>, ou te met la pression (“ne raccroche pas”), c’est très souvent une arnaque.
+      </p>
+    </div>
+
+    <div class="box">
+      <div class="grid2">
+        <div>
+          <label><b>Thème</b></label>
+          <select id="theme">
+            <option value="general">Général</option>
+            <option value="banque">Banque</option>
+            <option value="livraison">Livraison</option>
+            <option value="gouvernement">Gouvernement / Immigration / Police</option>
+          </select>
+        </div>
+
+        <div>
+          <label><b>Mode</b></label>
+          <div class="btnRow" style="margin-top:0">
+            <button id="listenBtn" type="button">🎙️ Écouter</button>
+            <button id="stopBtn" disabled class="secondaryBtn" type="button">🛑 Stop</button>
+          </div>
+          <div id="status" class="muted" style="margin-top:8px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="boxTitleRow">
+        <h3>📝 Texte de l’appel</h3>
+        <span class="chip">Copie/colle</span>
+      </div>
+
+      <label class="muted" style="margin:0 0 8px">
+        Colle ce que la personne dit (ou active le micro).
+      </label>
+
+      <textarea id="text" placeholder="Ex: Bonjour je suis du service sécurité. Votre compte est bloqué. On a juste besoin du chiffre envoyé sur ton cell. Ne raccrochez pas."></textarea>
+
+      <div class="btnRow">
+        <button id="analyzeBtn" type="button">Analyser mon appel</button>
+        <button id="clearBtn" class="secondaryBtn" type="button">Effacer</button>
+        <button id="demoBtn" class="secondaryBtn" type="button">Mettre un exemple</button>
+      </div>
+
+      <div class="tiny" style="margin-top:10px">
+        Conseil : si le ton est pressant, raccroche. Ensuite seulement, vérifie via un numéro officiel.
+      </div>
+    </div>
+
+<!--
+  Email capture
+  <div class="box" id="waitlist">
+    <div class="boxTitleRow">
+      <h3>📩 Rejoindre la liste (accès bêta)</h3>
+      <span class="chip">Gratuit</span>
+    </div>
+
+    <p class="muted" style="margin:0">
+      Laisse ton email pour recevoir le rapport + être averti quand la version mobile sort.
+      <br><span class="tiny">Tu peux te désinscrire à tout moment.</span>
+    </p>
+
+    <div class="emailRow" style="margin-top:12px">
+      <input id="email" type="email" placeholder="ton.email@gmail.com" />
+      <button id="joinBtn" type="button">Je veux être informé</button>
+      <button class="secondaryBtn" id="privacyBtn" type="button">Politique</button>
+    </div>
+
+    <div id="joinStatus" class="muted" style="margin-top:10px"></div>
+  </div>
+-->
+
+    <!-- Signals -->
+    <div class="box">
+      <div class="boxTitleRow">
+        <h3>🧩 Signaux suspects détectés</h3>
+        <span class="chip">Auto-analyse</span>
+      </div>
+
+      <div id="hits">-</div>
+
+      <div class="riskRow">
+        <div class="riskBadge" id="riskBadge">
+          <span class="dot" id="riskDot"></span>
+          Risque : <span id="risk">-</span>
+        </div>
+
+        <div style="flex:1">
+          <div class="bar"><div id="scoreFill"></div></div>
+          <div class="muted" style="font-size:12px;margin-top:6px">
+            Score = indicateur (pas une certitude). Reste prudent.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coaching -->
+    <div class="box">
+      <div class="boxTitleRow">
+        <h3>🧠 Coaching (quoi comprendre + quoi répondre)</h3>
+        <span class="chip">Guidé</span>
+      </div>
+
+      <div class="panel">
+        <h4>Résumé</h4>
+        <div id="sum1" class="mono">-</div>
+      </div>
+
+      <div class="panel">
+        <h4>Pourquoi c’est dangereux</h4>
+        <div id="sum2" class="mono">-</div>
+      </div>
+
+      <div class="panel">
+        <h4>✅ Réponses à dire (courtes et fermes)</h4>
+        <ul id="sayList" class="list"></ul>
+      </div>
+
+      <div class="panel">
+        <h4>❓ Questions à poser (pour casser l’arnaque)</h4>
+        <ul id="askList" class="list"></ul>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="box">
+      <div class="boxTitleRow">
+        <h3>🛡️ Actions sûres recommandées</h3>
+        <span class="chip">À faire maintenant</span>
+      </div>
+
+      <div class="panel">
+        <div id="action" class="mono">-</div>
+      </div>
+
+      <div class="tiny" style="margin-top:10px">
+        Ce test est un outil d’aide. En cas de doute, raccroche et contacte l’organisme via son numéro officiel.
+      </div>
+    </div>
+
+    <!-- Pricing (NO PRICES, just teaser) -->
+    <div class="box" id="pricing">
+      <div class="boxTitleRow">
+        <h3>Version finale disponible bientôt</h3>
+        <span class="chip">Accès anticipé</span>
+      </div>
+
+      <div class="grid3">
+        <div class="plan">
+          <div class="planTop">
+            <div>
+              <div class="planName">🟢 Essai</div>
+              <div class="tiny">Découvrir & tester</div>
+            </div>
+          </div>
+
+          <div class="pill">3 scans / semaine</div>
+          <ul>
+            <li>Analyse texte / audio upload</li>
+            <li>Conseils & réponses guidées</li>
+            <li>Historique limité</li>
+          </ul>
+
+          <div class="planCTA">
+            <button class="secondaryBtn" type="button" id="ctaTry">Je veux essayer</button>
+          </div>
+        </div>
+
+        <div class="plan highlight">
+          <div class="planTop">
+            <div>
+              <div class="planName">🔵 Plus</div>
+              <div class="tiny">(5$) Utilisation régulière</div>
+            </div>
+          </div>
+
+          <div class="pill">5 scans / semaine</div>
+          <ul>
+            <li>Historique 30 jours</li>
+            <li>Analyse plus détaillée</li>
+            <li>Support email (standard)</li>
+          </ul>
+
+          <div class="planCTA">
+            <button type="button" id="ctaPlus">Accès anticipé</button>
+            <button class="secondaryBtn" type="button" id="ctaPlusInfo">Détails</button>
+          </div>
+        </div>
+
+        <div class="plan">
+          <div class="planTop">
+            <div>
+              <div class="planName">👨‍👩 Illimité </div>
+              <div class="tiny">(10$mois) Protection Illimité</div>
+            </div>
+          </div>
+
+          <div class="pill">Jusqu’à 20 scans/semaine</div>
+          <ul>
+            <li>Scans plus élevés (usage intensif)</li>
+            <li>Alertes & prévention</li>
+            <li>Support prioritaire</li>
+          </ul>
+
+          <div class="planCTA">
+            <button type="button" id="ctaFamilyWaitlist">Rejoindre la liste</button>
+            <button class="secondaryBtn" type="button" id="ctaFamilyInfo">Détails</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tiny" style="margin-top:12px">
+        Les tarifs seront annoncés au lancement. Rejoins la liste pour être informé en priorité.
+      </div>
+    </div>
+
+    <footer>
+      © <span id="year"></span> Anti-arnaque — Prototype. Ne partage jamais tes codes SMS, mots de passe ou infos bancaires.
+    </footer>
+
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <div class="toastRow">
+      <div class="toastMsg" id="toastMsg">-</div>
+      <button class="toastClose" id="toastClose" type="button">OK</button>
+    </div>
+  </div>
+
+<script>
+/* =========================
+   0) Toast utils (remplace alert)
+========================= */
+const toastEl = document.getElementById("toast");
+const toastMsgEl = document.getElementById("toastMsg");
+const toastCloseEl = document.getElementById("toastClose");
+
+function toast(msg){
+  toastMsgEl.textContent = msg;
+  toastEl.style.display = "block";
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => (toastEl.style.display="none"), 4500);
+}
+toastCloseEl.onclick = () => toastEl.style.display="none";
+
+/* ===== 1) “Base de connaissance” (règles) ===== */
+const THEMES = {
+  general: {
+    redflags: [
+      "urgent", "immédiatement", "dernier avis", "tout de suite",
+      "compte bloqué", "compte bloque", "gelé", "gele",
+      "ne raccrochez pas", "ne raccroche pas", "restez en ligne",
+      "police", "immigration", "gouvernement",
+      "carte-cadeau", "carte cadeau", "gift card", "crypto", "bitcoin",
+      "anydesk", "teamviewer", "code sms", "otp", "2fa", "nip", "pin", "cvv", "numéro de carte", "numero de carte",
+      "clique", "lien", "url", "site", "telecharge", "installe", "application", "support technique", "microsoft"
+    ],
+    say: [
+      "Je ne traite rien sous pression.",
+      "Je ne donne jamais de code SMS/OTP/NIP/CVV au téléphone.",
+      "Je vais raccrocher et rappeler via le numéro officiel."
+    ],
+    ask: [
+      "Quel est votre nom complet et votre extension ?",
+      "Quel est le numéro de dossier / référence ?",
+      "Pouvez-vous me l’envoyer via mon compte officiel / courrier officiel ?"
+    ]
+  },
+  banque: {
+    redflags: ["code sms", "otp", "2fa", "nip", "pin", "cvv", "compte bloqué", "compte bloque", "urgent", "virement", "fraude", "transaction", "paiement"],
+    say: [
+      "Je ne donne jamais de code SMS/OTP/NIP/CVV au téléphone.",
+      "Je raccroche et je rappelle la banque via le numéro officiel (site / carte).",
+      "Je vais vérifier dans mon compte officiel. Merci."
+    ],
+    ask: [
+      "Quel est le numéro de référence de l’appel ?",
+      "Quel est votre nom et votre extension ?",
+      "Quel est le nom exact de la banque et le département ?",
+      "Je rappelle via le numéro officiel, notez-le dans mon dossier."
+    ]
+  },
+  livraison: {
+    redflags: ["colis", "douane", "frais", "payer", "lien", "cliquer", "urgent", "dernier avis", "carte", "compte bloqué", "adresse", "saisie", "verification"],
+    say: [
+      "Je ne clique sur aucun lien reçu par SMS pendant un appel.",
+      "Je vais vérifier directement sur le site officiel du transporteur.",
+      "Je ne paye rien au téléphone. Je vérifie d’abord."
+    ],
+    ask: [
+      "Quel est le numéro de suivi officiel ?",
+      "Quel est le nom exact du transporteur ?",
+      "Donnez-moi l’URL officielle, je la taperai moi-même.",
+      "Je vérifie sur le site officiel et je vous recontacte."
+    ]
+  },
+  gouvernement: {
+    redflags: ["police", "immigration", "gouvernement", "arrestation", "mandat", "amende", "urgence", "immédiatement", "ne raccrochez pas", "bitcoin", "crypto", "carte-cadeau", "paiement", "penalite"],
+    say: [
+      "Je ne règle rien par téléphone sous menace.",
+      "Je raccroche et je contacte l’organisme via son numéro officiel.",
+      "Envoyez-moi un avis officiel par courrier."
+    ],
+    ask: [
+      "Quel service exact et quel identifiant d’agent ?",
+      "Quel est le numéro de dossier officiel ?",
+      "Quelle adresse de bureau / site officiel ?",
+      "Envoyez-moi une convocation/avis officiel."
+    ]
+  }
+};
+
+// Détections “intelligentes” (variantes)
+const REGEX_RULES = [
+  { re: /\b(code|codes)\b.*\b(sms|otp|2fa)\b/i, label: "Demande de code (SMS/OTP/2FA)" },
+  { re: /\b(nip|pin|cvv)\b/i, label: "Demande d’infos bancaires sensibles (NIP/PIN/CVV)" },
+  { re: /\b(ne\s+raccroch|restez\s+en\s+ligne)\b/i, label: "Pression: ne pas raccrocher" },
+  { re: /\b(compte)\b.*\b(bloqu|gele)\b/i, label: "Menace: compte bloqué/gelé" },
+  { re: /\b(anydesk|teamviewer)\b/i, label: "Accès à distance (AnyDesk/TeamViewer)" },
+  { re: /\b(carte.?cadeau|gift\s*card|crypto|bitcoin)\b/i, label: "Paiement suspect (cartes-cadeaux/crypto)" },
+  { re: /\b(clique|lien|url)\b/i, label: "Lien suspect (clique / URL)" },
+  { re: /\b(installe|telecharge|t[eé]l[eé]charge)\b/i, label: "Demande d’installation (téléchargement/app)" },
+  {
+    re: /\b(juste|seulement|uniquement)\b.*\b(chiffre|code|numero|numéro)\b.*\b(cell|telephone|t[eé]l[eé]phone|sms|texto|message)\b/i,
+    label: "Demande déguisée de code (chiffre/code sur téléphone)"
+  },
+  {
+    re: /\b(pas\s+besoin|on\s+n['’]a\s+pas\s+besoin)\b.*\b(code|mot\s+de\s+passe|password)\b.*\b(donne|envoy|dicte|dis)\b.*\b(code|chiffre|sms|otp|2fa)\b/i,
+    label: "Manipulation: minimise le risque puis demande un code"
+  }
+];
+
+/* ===== Intentions (ce que l'arnaqueur veut vraiment) ===== */
+const INTENT_RULES = [
+  {
+    key: "otp",
+    label: "Vol de code de vérification (OTP/SMS/2FA)",
+    want: ["Le code reçu par SMS (souvent 4 à 6 chiffres)", "Une validation 2FA/OTP"],
+    theyMayHave: ["Ton numéro de téléphone", "Parfois ton nom (si fuite de données)"],
+    why: "Avec ton code, ils peuvent se connecter à ton compte ou valider une transaction.",
+    say: [
+      "Je ne partage jamais un code reçu par SMS. Jamais.",
+      "Je raccroche et je rappelle via le numéro officiel."
+    ],
+    ask: [
+      "Quel est le numéro de dossier officiel ?",
+      "Je veux un email officiel via mon compte (pas au téléphone)."
+    ],
+    re: [
+      /\b(code|chiffre|numero|numéro)\b.*\b(sms|texto|message|cell|t[eé]l[eé]phone)\b/i,
+      /\b(otp|2fa|authentification|verification|v[eé]rification)\b/i,
+      /\b(juste|seulement|uniquement)\b.*\b(chiffre|code)\b/i
+    ]
+  },
+  {
+    key: "password",
+    label: "Vol d’identifiants (mot de passe / login)",
+    want: ["Ton mot de passe", "Ton identifiant / email", "Accès au compte"],
+    theyMayHave: ["Ton email ou ton nom (souvent)", "Des infos partielles trouvées en ligne"],
+    why: "Ils cherchent un accès direct à tes comptes.",
+    say: [
+      "Je ne donne jamais de mot de passe au téléphone.",
+      "Je vais vérifier dans mon compte officiel et je vous rappelle."
+    ],
+    ask: [
+      "Quel est votre nom complet et votre extension ?",
+      "Quelle entreprise exactement ? Donnez-moi l’URL officielle."
+    ],
+    re: [
+      /\b(mot\s*de\s*passe|password|mdp)\b/i,
+      /\b(identifiant|login|nom\s*d['’]utilisateur|username)\b/i
+    ]
+  },
+  {
+    key: "card",
+    label: "Vol bancaire (carte / CVV / PIN / infos)",
+    want: ["Numéro de carte", "CVV", "NIP/PIN", "Infos pour paiement ou virement"],
+    theyMayHave: ["Ton nom", "Parfois les 4 derniers chiffres (si fuite)"],
+    why: "Ils peuvent effectuer des achats, virements ou usurper ton identité bancaire.",
+    say: [
+      "Je ne communique jamais mon CVV/NIP/PIN.",
+      "Je raccroche et j’appelle la banque via le numéro au dos de la carte."
+    ],
+    ask: [
+      "Quel est le numéro de référence de l’appel ?",
+      "Je rappelle via le numéro officiel, merci."
+    ],
+    re: [
+      /\b(cvv|nip|pin)\b/i,
+      /\b(num[eé]ro\s*de\s*carte|carte)\b/i,
+      /\b(virement|transfert|fraude|transaction)\b/i
+    ]
+  },
+  {
+    key: "remote",
+    label: "Prise de contrôle (AnyDesk/TeamViewer)",
+    want: ["Accéder à ton téléphone/PC", "Voir ton écran", "Contrôler l’appareil"],
+    theyMayHave: ["Ta peur/pression", "Un faux prétexte de support"],
+    why: "Ils prennent le contrôle pour voler des infos, installer quelque chose, ou valider des paiements.",
+    say: [
+      "Je n’installe aucun logiciel de contrôle à distance.",
+      "Je vais contacter le support officiel moi-même."
+    ],
+    ask: [
+      "Quel est le site officiel ? Je vais ouvrir un ticket moi-même.",
+      "Donnez-moi un numéro de dossier et je rappelle."
+    ],
+    re: [
+      /\b(anydesk|teamviewer|prise\s*de\s*contr[oô]le|contr[oô]ler\s*mon\s*[eé]cran)\b/i,
+      /\b(installe|t[eé]l[eé]charge|telecharge|ouvre)\b.*\b(app|application|logiciel)\b/i
+    ]
+  },
+  {
+    key: "authority",
+    label: "Menace / Autorité (police, immigration, gouvernement)",
+    want: ["Te faire paniquer", "Obtenir paiement ou infos", "T’empêcher de vérifier"],
+    theyMayHave: ["Ton numéro", "Ton nom parfois"],
+    why: "La peur te pousse à obéir sans réfléchir.",
+    say: [
+      "Je ne règle rien sous menace par téléphone.",
+      "Envoyez-moi un avis officiel. Je raccroche."
+    ],
+    ask: [
+      "Quel service exact et quel identifiant d’agent ?",
+      "Quel est le numéro de dossier officiel ?"
+    ],
+    re: [
+      /\b(police|immigration|gouvernement|arrestation|mandat|amende)\b/i,
+      /\b(ne\s*raccroch|restez\s*en\s*ligne)\b/i
+    ]
+  },
+  {
+    key: "link",
+    label: "Piège par lien (SMS/Email) + action urgente",
+    want: ["Te faire cliquer", "Te faire entrer tes infos", "Installer quelque chose"],
+    theyMayHave: ["Ton numéro (si SMS)", "Un message bien imité"],
+    why: "Le lien t’emmène vers un faux site qui vole tes infos.",
+    say: [
+      "Je ne clique sur aucun lien reçu par SMS pendant un appel.",
+      "Je vais sur le site officiel moi-même (tapé à la main)."
+    ],
+    ask: [
+      "Quel est le numéro de suivi / référence ?",
+      "Je vérifie sur le site officiel."
+    ],
+    re: [
+      /\b(clique|lien|url|site)\b/i,
+      /\b(urgent|dernier\s*avis|imm[eé]diatement)\b/i
+    ]
+  }
+];
+
+function normalize(s){
+  return (s||"")
+    .toLowerCase()
+    .replaceAll("é","e").replaceAll("è","e").replaceAll("ê","e")
+    .replaceAll("à","a").replaceAll("ç","c")
+    .replace(/[^a-z0-9\s]/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+}
+function dedup(arr){
+  const seen = new Set();
+  const out = [];
+  for (const x of arr){
+    if (!seen.has(x)){ seen.add(x); out.push(x); }
+  }
+  return out;
+}
+function detectIntents(rawText){
+  const found = [];
+  for (const rule of INTENT_RULES){
+    if (rule.re.some(rx => rx.test(rawText))) found.push(rule);
+  }
+  return found;
+}
+function analyze(text, themeKey){
+  const cfg = THEMES[themeKey] || THEMES.general;
+  const t = normalize(text);
+
+  let hits = [];
+  for (const w of cfg.redflags){
+    const wn = normalize(w);
+    if (wn && t.includes(wn)) hits.push(w);
+  }
+  for (const r of REGEX_RULES){
+    if (r.re.test(text)) hits.push(r.label);
+  }
+  hits = dedup(hits);
+
+  const intents = detectIntents(text);
+  const score = Math.min(100, (hits.length * 15) + (intents.length * 20));
+  const level = score >= 60 ? "ÉLEVÉ" : (score >= 30 ? "MOYEN" : "FAIBLE");
+  const primary = intents[0] || null;
+
+  const say2 = primary ? dedup([...primary.say, ...cfg.say]) : cfg.say;
+  const ask2 = primary ? dedup([...primary.ask, ...cfg.ask]) : cfg.ask;
+
+  const intentSummary = primary ? {
+    title: primary.label,
+    want: primary.want,
+    have: primary.theyMayHave,
+    why: primary.why
+  } : {
+    title: "Intention non déterminée (reste prudent)",
+    want: ["Informations personnelles ou action rapide"],
+    have: ["Ton numéro / nom peut-être"],
+    why: "Certaines arnaques utilisent des formulations variées."
+  };
+
+  const action = [
+    "1) Raccroche si tu sens la pression.",
+    "2) Ne donne jamais: code SMS/OTP, NIP/PIN, CVV, mot de passe.",
+    "3) Rappelle via le numéro officiel (site, carte, facture).",
+    "4) Ne rappelle jamais le numéro entrant.",
+    "5) Si doute: demande ‘Je vous rappelle plus tard’ puis vérifie."
+  ];
+
+  return {level, score, hits, say: say2, ask: ask2, action, intentSummary, intents};
+}
+
+/* ===== 2) UI ===== */
+const themeEl = document.getElementById("theme");
+const textEl = document.getElementById("text");
+
+const hitsEl = document.getElementById("hits");
+const riskEl = document.getElementById("risk");
+const riskBadgeEl = document.getElementById("riskBadge");
+const scoreFillEl = document.getElementById("scoreFill");
+const riskDotEl = document.getElementById("riskDot");
+
+const sum1El = document.getElementById("sum1");
+const sum2El = document.getElementById("sum2");
+const sayListEl = document.getElementById("sayList");
+const askListEl = document.getElementById("askList");
+const actionEl = document.getElementById("action");
+
+function setRiskStyle(level){
+  if (level === "FAIBLE") {
+    riskBadgeEl.style.background = "rgba(34,197,94,.14)";
+    riskBadgeEl.style.borderColor = "rgba(34,197,94,.30)";
+    riskDotEl.style.background = "rgba(34,197,94,.95)";
+    riskDotEl.style.boxShadow = "0 0 0 4px rgba(34,197,94,.10)";
+  } else if (level === "MOYEN") {
+    riskBadgeEl.style.background = "rgba(245,158,11,.14)";
+    riskBadgeEl.style.borderColor = "rgba(245,158,11,.30)";
+    riskDotEl.style.background = "rgba(245,158,11,.95)";
+    riskDotEl.style.boxShadow = "0 0 0 4px rgba(245,158,11,.10)";
+  } else {
+    riskBadgeEl.style.background = "rgba(239,68,68,.14)";
+    riskBadgeEl.style.borderColor = "rgba(239,68,68,.30)";
+    riskDotEl.style.background = "rgba(239,68,68,.95)";
+    riskDotEl.style.boxShadow = "0 0 0 4px rgba(239,68,68,.10)";
+  }
+}
+
+document.getElementById("analyzeBtn").onclick = () => {
+  const txt = textEl.value.trim();
+  if (!txt){
+    toast("Colle/écris d’abord le texte de l’appel 🙂");
+    return;
+  }
+
+  const res = analyze(txt, themeEl.value);
+
+  riskEl.textContent = `${res.level} (${res.score}/100)`;
+  setRiskStyle(res.level);
+  scoreFillEl.style.width = `${res.score}%`;
+
+  if (!res.hits.length){
+    hitsEl.textContent = "Aucun signal détecté (reste prudent).";
+  } else {
+    hitsEl.innerHTML = res.hits.map(x => `<span class="tag">${x}</span>`).join("");
+  }
+
+  sum1El.textContent =
+    `• Intention probable : ${res.intentSummary.title}\n` +
+    `• Ce qu’elle cherche à obtenir :\n   - ${res.intentSummary.want.join("\n   - ")}\n` +
+    `• Ce qu’elle pourrait déjà savoir :\n   - ${res.intentSummary.have.join("\n   - ")}`;
+
+  sum2El.textContent = `• ${res.intentSummary.why}`;
+
+  sayListEl.innerHTML = res.say.map(x => `<li>${x}</li>`).join("");
+  askListEl.innerHTML = res.ask.map(x => `<li>${x}</li>`).join("");
+  actionEl.textContent = res.action.join("\n");
+
+  document.getElementById("hits").scrollIntoView({behavior:"smooth", block:"center"});
+};
+
+document.getElementById("clearBtn").onclick = () => {
+  textEl.value = "";
+  hitsEl.textContent = "-";
+  riskEl.textContent = "-";
+  scoreFillEl.style.width = "0%";
+
+  sum1El.textContent = "-";
+  sum2El.textContent = "-";
+  sayListEl.innerHTML = "";
+  askListEl.innerHTML = "";
+
+  actionEl.textContent = "-";
+  toast("Réinitialisé ✅");
+};
+
+document.getElementById("demoBtn").onclick = () => {
+  themeEl.value = "banque";
+  textEl.value = "Bonjour je suis du service sécurité de votre banque. Votre compte est bloqué. On a juste besoin du chiffre envoyé sur ton cell pour confirmer. Ne raccrochez pas.";
+  toast("Exemple ajouté ✅ Clique sur “Analyser mon appel”.");
+};
+
+document.getElementById("demoQuickBtn").onclick = () => {
+  document.getElementById("demoBtn").click();
+  window.scrollTo({top: 250, behavior:"smooth"});
+};
+
+/* ===== 3) Option “écouter” (si supporté) ===== */
+let recognition = null;
+const statusEl = document.getElementById("status");
+const listenBtn = document.getElementById("listenBtn");
+const stopBtn = document.getElementById("stopBtn");
+
+function setListening(on){
+  listenBtn.disabled = on;
+  stopBtn.disabled = !on;
+}
+
+listenBtn.onclick = () => {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR){
+    toast("Transcription non supportée ici. Essaie Chrome ou Edge.");
+    return;
+  }
+
+  recognition = new SR();
+  recognition.lang = "fr-FR";
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  statusEl.textContent = "Écoute en cours… (mets l’appel en haut-parleur si besoin)";
+  setListening(true);
+
+  let finalText = "";
+  recognition.onresult = (event) => {
+    let interim = "";
+    for (let i = event.resultIndex; i < event.results.length; i++){
+      const part = event.results[i][0].transcript;
+      if (event.results[i].isFinal) finalText += part + " ";
+      else interim += part;
+    }
+    const shown = (finalText + interim).trim();
+    textEl.value = shown;
+
+    if (shown.length > 20) document.getElementById("analyzeBtn").click();
+  };
+
+  recognition.onerror = (e) => {
+    statusEl.textContent = "Erreur micro/transcription: " + e.error;
+    setListening(false);
+  };
+
+  recognition.onend = () => {
+    statusEl.textContent = "Arrêt.";
+    setListening(false);
+  };
+
+  recognition.start();
+};
+
+stopBtn.onclick = () => {
+  if (recognition) recognition.stop();
+  setListening(false);
+  toast("Micro arrêté.");
+};
+
+/* ===== 4) Collecte email (sans backend) ===== */
+const FORMSPREE_URL = "https://formspree.io/f/TON_ID_ICI";
+
+const emailEl = document.getElementById("email");
+const joinBtn = document.getElementById("joinBtn");
+const joinStatus = document.getElementById("joinStatus");
+const privacyBtn = document.getElementById("privacyBtn");
+
+privacyBtn.onclick = () => {
+  toast(
+    "Politique (résumé): On collecte uniquement ton email pour te recontacter. " +
+    "Aucune transcription audio n’est envoyée automatiquement. Tu peux demander la suppression à tout moment."
+  );
+};
+
+joinBtn.onclick = async () => {
+  const email = (emailEl.value || "").trim();
+  if (!email || !email.includes("@")) {
+    joinStatus.textContent = "Entre un email valide 🙂";
+    toast("Entre un email valide 🙂");
+    return;
+  }
+
+  joinBtn.disabled = true;
+  joinStatus.textContent = "Envoi en cours…";
+
+  try {
+    const res = await fetch(FORMSPREE_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({
+        email,
+        source: "anti-arnaque-test",
+        createdAt: new Date().toISOString()
+      })
+    });
+
+    if (res.ok) {
+      joinStatus.textContent = "✅ Merci ! Tu es sur la liste. On te contacte bientôt.";
+      toast("✅ Merci ! Email enregistré.");
+      emailEl.value = "";
+    } else {
+      joinStatus.textContent = "⚠️ Impossible d’envoyer. Réessaie plus tard.";
+      toast("⚠️ Impossible d’envoyer. Réessaie plus tard.");
+    }
+  } catch (e) {
+    joinStatus.textContent = "⚠️ Erreur réseau. Vérifie ta connexion.";
+    toast("⚠️ Erreur réseau. Vérifie ta connexion.");
+  } finally {
+    joinBtn.disabled = false;
+  }
+};
+
+/* ===== Pricing CTAs (NO PRICES) ===== */
+function scrollToEmail(){
+  document.getElementById("waitlist").scrollIntoView({behavior:"smooth", block:"center"});
+  emailEl.focus();
+}
+
+document.getElementById("ctaTry").onclick = () => scrollToEmail();
+document.getElementById("ctaPlus").onclick = () => scrollToEmail();
+document.getElementById("ctaFamilyWaitlist").onclick = () => scrollToEmail();
+
+document.getElementById("ctaPlusInfo").onclick = () =>
+  toast("🔵 Plus : 5 scans/semaine + historique 30 jours + analyse plus détaillée.");
+
+document.getElementById("ctaFamilyInfo").onclick = () =>
+  toast("👨‍👩‍👧‍👦 Famille : jusqu’à 5 personnes + alertes & prévention + support prioritaire.");
+
+document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
