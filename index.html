@@ -173,6 +173,21 @@
       color: var(--text);
       outline:none;
     }
+     select {
+      background-color: rgba(15, 20, 40, 0.95);
+      color: var(--text)
+    }
+
+    select option {
+      background-color: #0b1220;
+      color: #e9eefc
+    }
+
+    select option:hover,
+    select option:checked {
+      background-color: #1a2340;
+      color: #ffffff
+    }
     textarea{min-height:150px; resize: vertical}
     select:focus,textarea:focus,input:focus{
       border-color: rgba(255,77,109,.55);
@@ -1154,4 +1169,5 @@ document.getElementById("year").textContent = new Date().getFullYear();
 
 </body>
 </html>
+
 
